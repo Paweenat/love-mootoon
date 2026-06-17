@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>คำขออนุญาตไปร้านเหล้า</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Chonburi&family=Mali:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+  :root{
+    --pink-bg:#ffd6e6;
+    --pink-soft:#ffeef5;
+    --paper:#fffdf8;
+    --ink:#5b4636;
+    --blue:#5fb3d9;
+    --magenta:#e8559a;
+    --line:#f6d3e2;
+    --flower:#ff9fc0;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    min-height:100vh;
+    display:flex;
+    align-items:flex-start;
+    justify-content:center;
+    padding:16px 10px 50px;
+    background:radial-gradient(circle at 30% 10%, #fff0f6, var(--pink-soft) 60%);
+    font-family:'Mali', sans-serif;
+    color:var(--ink);
+  }
+  .frame{
+    position:relative;
+    width:100%;
+    max-width:680px;
+    padding:30px;
+    border-radius:34px;
+    background-color:var(--pink-bg);
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='60' height='60'><g fill='%23ff9fc0' opacity='0.55'><circle cx='30' cy='15' r='9'/><circle cx='30' cy='45' r='9'/><circle cx='15' cy='30' r='9'/><circle cx='45' cy='30' r='9'/></g><circle cx='30' cy='30' r='6' fill='%23ffe27a'/></svg>");
+    background-repeat:repeat;
+    background-size:60px 60px;
+    box-shadow:0 18px 40px rgba(216,90,140,0.25);
+  }
+  .bunny{position:absolute;pointer-events:none;filter:drop-shadow(0 6px 8px rgba(0,0,0,0.12));}
+  .bunny.tr{top:-26px;right:-18px;width:96px;transform:rotate(8deg);}
+  .bunny.bl{bottom:-22px;left:-20px;width:84px;transform:rotate(-6deg) scaleX(-1);}
+
+  .page{
+    position:relative;
+    background:var(--paper);
+    border-radius:22px;
+    padding:38px 34px 30px;
+    background-image:repeating-linear-gradient(to bottom, transparent 0 33px, var(--line) 33px 34px);
+    box-shadow:inset 0 0 0 1px rgba(0,0,0,0.02);
+    overflow:hidden;
+  }
+
+  h1{
+    font-family:'Chonburi', cursive;
+    font-weight:400;
+    color:var(--blue);
+    text-align:center;
+    font-size:2.1rem;
+    margin:0 0 4px;
+    text-shadow:1px 1px 0 #fff;
+  }
+  .subtitle{
+    text-align:center;
+    font-style:italic;
+    color:var(--magenta);
+    font-size:0.95rem;
+    margin:0 0 22px;
+  }
+
+  .meta{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px 22px;
+    justify-content:center;
+    font-size:0.92rem;
+    margin-bottom:20px;
+    color:var(--ink);
+  }
+  .meta span[contenteditable]{
+    border-bottom:1.5px dashed var(--flower);
+    padding:0 4px;
+    min-width:90px;
+    display:inline-block;
+    outline:none;
+  }
+  .meta span[contenteditable]:focus{background:#fff7fa;}
+
+  ol.rules{list-style:none;margin:0 0 26px;padding:0;}
+  ol.rules li{
+    display:flex;
+    gap:10px;
+    margin-bottom:14px;
+    line-height:1.55;
+    font-size:1.02rem;
+  }
+  .num{
+    font-weight:700;
+    color:var(--blue);
+    flex:0 0 auto;
+  }
+  .rule-text b{color:var(--magenta);}
+
+  .ps{
+    font-size:0.92rem;
+    font-style:italic;
+    color:var(--magenta);
+    text-align:center;
+    margin:6px 0 26px;
+  }
+
+  .sig-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:20px;
+    margin-bottom:8px;
+  }
+  .sig-block{text-align:center;}
+  .sig-label{font-weight:700;color:var(--ink);margin-bottom:6px;font-size:0.95rem;}
+  .pad-wrap{
+    position:relative;
+    border-bottom:2px dashed var(--flower);
+    border-radius:10px;
+    background:#fffafd;
+    height:120px;
+  }
+  .pad-wrap .hint{
+    position:absolute;
+    inset:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:#e7b9cd;
+    font-size:0.95rem;
+    pointer-events:none;
+  }
+  canvas.pad{
+    position:relative;
+    width:100%;
+    height:120px;
+    touch-action:none;
+    cursor:crosshair;
+  }
+  .clear-link{
+    margin-top:6px;
+    font-size:0.82rem;
+    color:var(--blue);
+    background:none;
+    border:none;
+    text-decoration:underline;
+    cursor:pointer;
+    font-family:'Mali', sans-serif;
+  }
+  .name-tag{font-size:0.85rem;color:#9a8a7d;margin-top:2px;}
+  .pad-wrap.signed{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-bottom:2px solid var(--flower);
+  }
+  .signed-name{
+    font-family:'Mali', cursive;
+    font-style:italic;
+    font-weight:700;
+    font-size:1.7rem;
+    color:var(--ink);
+    transform:rotate(-4deg);
+  }
+  .sent-msg{
+    display:none;
+    margin-top:14px;
+    font-weight:700;
+    color:var(--magenta);
+    font-size:1.05rem;
+  }
+  .sent-msg.show{
+    display:block;
+    animation:popIn .3s ease;
+  }
+  @keyframes popIn{
+    from{opacity:0; transform:translateY(6px) scale(.95);}
+    to{opacity:1; transform:translateY(0) scale(1);}
+  }
+
+  .save-row{text-align:center;margin-top:26px;}
+  #saveBtn{
+    font-family:'Mali', sans-serif;
+    font-weight:700;
+    font-size:1.05rem;
+    color:#fff;
+    background:linear-gradient(135deg, var(--magenta), #ff8fc4);
+    border:none;
+    padding:14px 30px;
+    border-radius:999px;
+    cursor:pointer;
+    box-shadow:0 10px 22px rgba(232,85,154,0.35);
+    transition:transform .15s ease;
+  }
+  #saveBtn:hover{transform:translateY(-2px);}
+  #saveBtn:active{transform:translateY(0);}
+  .save-hint{font-size:0.8rem;color:#aa9587;margin-top:8px;}
+
+  @media (max-width:480px){
+    body{padding:10px 6px 40px;}
+    .frame{padding:14px;border-radius:24px;}
+    .page{padding:24px 18px 22px;border-radius:16px;}
+    h1{font-size:1.65rem;}
+    .subtitle{font-size:0.82rem;margin-bottom:16px;}
+    .meta{font-size:0.82rem;gap:6px 14px;margin-bottom:16px;}
+    ol.rules li{font-size:0.92rem;gap:8px;margin-bottom:11px;line-height:1.45;}
+    .ps{font-size:0.82rem;margin:4px 0 18px;}
+    .sig-grid{grid-template-columns:1fr;gap:14px;}
+    .pad-wrap, canvas.pad{height:100px;}
+    .signed-name{font-size:1.5rem;}
+    #saveBtn{font-size:0.98rem;padding:13px 26px;}
+    .bunny.tr{width:62px;top:-14px;right:-10px;}
+    .bunny.bl{width:54px;bottom:-10px;left:-10px;}
+  }
+  @media (max-width:360px){
+    h1{font-size:1.45rem;}
+    .page{padding:20px 14px 18px;}
+    ol.rules li{font-size:0.88rem;}
+  }
+</style>
+</head>
+<body>
+
+<div class="frame" id="contractPage">
+
+  <svg class="bunny tr" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <ellipse cx="33" cy="22" rx="9" ry="20" fill="#fff" stroke="#f3c9d7" stroke-width="1"/>
+    <ellipse cx="33" cy="24" rx="4.5" ry="13" fill="#ffd3e4"/>
+    <ellipse cx="63" cy="22" rx="9" ry="20" fill="#fff" stroke="#f3c9d7" stroke-width="1"/>
+    <ellipse cx="63" cy="24" rx="4.5" ry="13" fill="#ffd3e4"/>
+    <ellipse cx="48" cy="58" rx="34" ry="30" fill="#fff" stroke="#f3c9d7" stroke-width="1"/>
+    <path d="M34 52 Q39 48 44 52" stroke="#5b4636" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+    <path d="M52 52 Q57 48 62 52" stroke="#5b4636" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+    <ellipse cx="36" cy="62" rx="5" ry="3.4" fill="#ffb6cf"/>
+    <ellipse cx="60" cy="62" rx="5" ry="3.4" fill="#ffb6cf"/>
+    <path d="M44 64 Q48 68 52 64" stroke="#5b4636" stroke-width="2" fill="none" stroke-linecap="round"/>
+    <path d="M40 80 l8 -6 l8 6 l-3 8 q-5 4 -10 0 z" fill="#e8559a"/>
+    <path d="M58 76 q10 -4 10 6 q-6 8 -10 -6 z" fill="#ff8fc4"/>
+  </svg>
+
+  <svg class="bunny bl" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <ellipse cx="33" cy="22" rx="9" ry="20" fill="#fff" stroke="#f3c9d7" stroke-width="1"/>
+    <ellipse cx="33" cy="24" rx="4.5" ry="13" fill="#ffd3e4"/>
+    <ellipse cx="63" cy="22" rx="9" ry="20" fill="#fff" stroke="#f3c9d7" stroke-width="1"/>
+    <ellipse cx="63" cy="24" rx="4.5" ry="13" fill="#ffd3e4"/>
+    <ellipse cx="48" cy="58" rx="34" ry="30" fill="#fff" stroke="#f3c9d7" stroke-width="1"/>
+    <path d="M34 52 Q39 48 44 52" stroke="#5b4636" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+    <path d="M52 52 Q57 48 62 52" stroke="#5b4636" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+    <ellipse cx="36" cy="62" rx="5" ry="3.4" fill="#ffb6cf"/>
+    <ellipse cx="60" cy="62" rx="5" ry="3.4" fill="#ffb6cf"/>
+    <path d="M44 64 Q48 68 52 64" stroke="#5b4636" stroke-width="2" fill="none" stroke-linecap="round"/>
+    <path d="M40 80 l8 -6 l8 6 l-3 8 q-5 4 -10 0 z" fill="#e8559a"/>
+    <path d="M58 76 q10 -4 10 6 q-6 8 -10 -6 z" fill="#ff8fc4"/>
+  </svg>
+
+  <div class="page">
+    <h1>คำขออนุญาตไปร้านเหล้า</h1>
+    <div class="subtitle">เอกสารฉบับซื่อสัตย์ จากนิว ถึง ลูกตาล 💌</div>
+
+    <div class="meta">
+      <span>📍 ไปเที่ยวกับ : <span contenteditable="true">กลุ่มเพื่อน...</span></span>
+      <span>🗓️ วันที่ : <span contenteditable="true" id="dateField"></span></span>
+    </div>
+
+    <ol class="rules">
+      <li><span class="num">1.</span><span class="rule-text">ต้องส่งแฟน<b>นอนหลับ</b>ก่อน ถึงจะไปได้</span></li>
+      <li><span class="num">2.</span><span class="rule-text"><b>ไม่กินเหล้า</b> และไม่แตะต้องของมึนเมาทุกชนิด</span></li>
+      <li><span class="num">3.</span><span class="rule-text">จะไม่สนใจใครคนอื่นในร้าน นอกจาก<b>กลุ่มเพื่อนของผม</b>เท่านั้น</span></li>
+      <li><span class="num">4.</span><span class="rule-text">ตลอดเวลาที่อยู่ที่นั่น ต้อง<b>รายงานตลอด</b> ให้ลูกตาลรู้ว่าทำอะไรอยู่เสมอ</span></li>
+      <li><span class="num">5.</span><span class="rule-text">ให้เกียรติอ้วนอยู่เสมอ และ<b>คิดถึงอ้วน</b>เสมอ</span></li>
+      <li><span class="num">6.</span><span class="rule-text">วันต่อมาที่เจอกัน ไม่ว่าลูกตาลจะเป็นยังไง นิวต้อง<b>รับให้ได้</b> และทำให้ลูกตาล<b>ยิ้มได้</b>ในที่สุด</span></li>
+      <li><span class="num">7.</span><span class="rule-text">ถ้าหายไปนานจน<b>เกิดความน่าสงสัย</b> ลูกตาล<b>งอนได้เลย</b> และเป็นทุกอย่างได้ นิวห้ามเรียกร้องอะไรทั้งนั้น</span></li>
+      <li><span class="num">8.</span><span class="rule-text">ถ้าทำผิดสัญญาแม้แต่<b>ข้อเดียว</b> งดไปร้านเหล้าแบบนี้<b>ตลอดไป</b></span></li>
+    </ol>
+
+    <div class="ps">Ps. ถ้าลงชื่อแล้ว สัญญาว่าจะทำตามทุกข้อจริง ๆ นะครับ 🥹💗</div>
+
+    <div class="sig-grid">
+      <div class="sig-block">
+        <div class="sig-label">ผู้ขออนุญาต</div>
+        <div class="pad-wrap signed">
+          <div class="signed-name">ประวีร์ณัฐ</div>
+        </div>
+        <div class="name-tag">นิว</div>
+      </div>
+      <div class="sig-block">
+        <div class="sig-label">ผู้อนุมัติ</div>
+        <div class="pad-wrap">
+          <div class="hint">เซ็นที่นี่ ✍️</div>
+          <canvas class="pad" id="sig2" width="600" height="240"></canvas>
+        </div>
+        <div class="name-tag">ลูกตาล</div>
+        <button class="clear-link" onclick="clearPad('sig2')">เคลียร์ลายเซ็น</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="save-row">
+  <button id="saveBtn" onclick="saveAsImage()">💾 บันทึกรูปภาพ</button>
+  <div class="save-hint">บันทึกเป็นไฟล์ JPG เก็บไว้ส่งให้นิวได้เลย</div>
+  <div class="sent-msg" id="sentMsg">📤 ส่งกลับไปให้นิว</div>
+</div>
+
+<script>
+  // fill today's date
+  const targetDate = new Date();
+  targetDate.setDate(19);
+  document.getElementById('dateField').textContent = targetDate.toLocaleDateString('th-TH', {day:'2-digit', month:'2-digit', year:'numeric'});
+
+  function setupPad(canvasId){
+    const canvas = document.getElementById(canvasId);
+    const ctx = canvas.getContext('2d');
+    ctx.lineWidth = 5;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    ctx.strokeStyle = '#5b4636';
+    let drawing = false;
+    let last = null;
+
+    function getPos(e){
+      const rect = canvas.getBoundingClientRect();
+      const t = e.touches ? e.touches[0] : e;
+      return {
+        x: (t.clientX - rect.left) * (canvas.width / rect.width),
+        y: (t.clientY - rect.top) * (canvas.height / rect.height)
+      };
+    }
+    function start(e){ drawing = true; last = getPos(e); e.preventDefault(); }
+    function move(e){
+      if(!drawing) return;
+      const p = getPos(e);
+      ctx.beginPath();
+      ctx.moveTo(last.x, last.y);
+      ctx.lineTo(p.x, p.y);
+      ctx.stroke();
+      last = p;
+      e.preventDefault();
+    }
+    function end(){ drawing = false; }
+
+    canvas.addEventListener('mousedown', start);
+    canvas.addEventListener('mousemove', move);
+    window.addEventListener('mouseup', end);
+    canvas.addEventListener('touchstart', start, {passive:false});
+    canvas.addEventListener('touchmove', move, {passive:false});
+    canvas.addEventListener('touchend', end, {passive:false});
+  }
+
+  function clearPad(canvasId){
+    const canvas = document.getElementById(canvasId);
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+  }
+
+  setupPad('sig2');
+
+  async function saveAsImage(){
+    const btn = document.getElementById('saveBtn');
+    const msg = document.getElementById('sentMsg');
+    const original = btn.textContent;
+    btn.textContent = 'กำลังบันทึก...';
+    btn.disabled = true;
+    msg.classList.remove('show');
+    try{
+      const target = document.getElementById('contractPage');
+      const canvas = await html2canvas(target, {scale: 2, backgroundColor: '#ffeef5', useCORS: true});
+      const link = document.createElement('a');
+      link.download = 'ขออนุญาตไปร้านเหล้า.jpg';
+      link.href = canvas.toDataURL('image/jpeg', 0.95);
+      link.click();
+      msg.classList.add('show');
+    } catch(err){
+      alert('บันทึกไม่สำเร็จ ลองอีกครั้งนะครับ');
+      console.error(err);
+    } finally {
+      btn.textContent = original;
+      btn.disabled = false;
+    }
+  }
+</script>
+</body>
+</html>
